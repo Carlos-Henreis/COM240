@@ -47,19 +47,21 @@ int main() {
 	while(1){//loop para as mensagens
 		bytes_recebidos=recv(sock,msg_recebida,TAMMENSG,0);//recebe mensagem do servidor
 		msg_recebida[bytes_recebidos] = '\0';
-		if (strcmp(msg_recebida , "s") == 0){//Se o servidor querer sair
+		if (strcmp(msg_recebida , "conexão encerrada pelo servidor\n") == 0){//Se o servidor querer sair
+			printf("%s\n", msg_recebida);
 			close(sock);//fecha o socket
 			break;
 		}
 		else
 			printf("\n Mensagem Recebida = %s " , msg_recebida);
 		printf("\n Enviar mensagem (s para sair): ");
-        gets(msg_enviada);//le a mensagem do cliente
+        fgets(msg_enviada, TAMMENSG, stdin);//le a mensagem do cliente
           
-		if (strcmp(msg_enviada , "s") != 0)
+		if (strcmp(msg_enviada , "s\n") != 0)
 			send(sock,msg_enviada,strlen(msg_enviada), 0);//A mensagem é enviada
 
-		else{ //senão devemos encerrar a mensagem
+		else{ //senão devemos encerrar a conexão
+			strcpy (msg_enviada, "conexão encerrada pelo cliente\n");
 			send(sock,msg_enviada,strlen(msg_enviada), 0);   
 			close(sock);
 			break;

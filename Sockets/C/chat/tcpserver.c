@@ -17,7 +17,7 @@ int main() {
     char msg_enviada [TAMMENSG] , msg_recebida[TAMMENSG];       
 
     struct sockaddr_in server_addr, client_addr;    
-    int sin_size;
+    socklen_t sin_size;
     
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {//Checa problemas
         perror("Socket");
@@ -45,12 +45,12 @@ int main() {
         exit(1);
     }
 
-    printf("\nTCPServidor esperando cliente na porta %d", PORTASERVIDOR);
-    fflush(stdout);
+    
 
 
     while(1) { //loop para ocorrer várias conexões(não simultânea) 
-
+        printf("\nTCPServidor esperando cliente na porta %d", PORTASERVIDOR);
+        fflush(stdout);
         sin_size = sizeof(struct sockaddr_in);
 
         conectado = accept(sock, (struct sockaddr *)&client_addr,&sin_size);
@@ -59,10 +59,11 @@ int main() {
 
         while (1) {//loop para mensagem
           printf("\n Enviar mensagem (s para sair): ");
-          gets(msg_enviada);//le a mensagem do servidor
+          fgets(msg_enviada, TAMMENSG, stdin);//le a mensagem do servidor
           
-          if (strcmp(msg_enviada , "s") == 0) {//Teste para sair (caso seja digitado s)
-            send(conectado, msg_enviada,strlen(msg_enviada), 0); 
+          if (strcmp(msg_enviada , "s\n") == 0) {//Teste para sair (caso seja digitado s)
+            strcpy (msg_enviada, "conexão encerrada pelo servidor\n");
+            send(conectado, msg_enviada,strlen(msg_enviada), 0);
             close(conectado);
             break;
           }
@@ -73,8 +74,8 @@ int main() {
           bytes_recebidos = recv(conectado,msg_recebida,TAMMENSG,0);//Revcebe resposta do cliente
 
           msg_recebida[bytes_recebidos] = '\0';//Armazena a mgs
-
-          if (strcmp(msg_recebida , "s") == 0) {//Se a mgs for 's' devemos encerrar a conexão
+          if (strcmp(msg_recebida , "conexão encerrada pelo cliente\n") == 0) {//Se a mgs for 's' devemos encerrar a conexão
+            printf("%s\n", msg_recebida);
             close(conectado);
             break;
           }
