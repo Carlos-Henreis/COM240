@@ -8,7 +8,7 @@
 #include <errno.h>
 #include <string.h>
 
-#define PORTASERVIDOR 2017
+#define PORTASERVIDOR 2019
 #define TAMMENSG 1024
 #define TAMBUFFER 1
 #define TAMNOME 64
@@ -52,7 +52,7 @@ int main() {
 
 
     while(1) { //loop para ocorrer várias conexões(não simultânea) 
-        printf("\nTCPServidor esperando cliente na porta %d", PORTASERVIDOR);
+        printf("\nTCPServidor esperando cliente na porta %d\n", PORTASERVIDOR);
         fflush(stdout);
         sin_size = sizeof(struct sockaddr_in);
 
@@ -61,7 +61,7 @@ int main() {
         bytes_recebidos = recv(conectado,nome_arq,TAMNOME,0);//Revcebe resposta do cliente
         nome_arq[bytes_recebidos] = '\0';//Armazena a mgs
         arquivo = fopen (nome_arq, "w");
-        if (strcmp(nome_arq, "s")){//finaliza conexao
+        if (strcmp(nome_arq, "s") == 0){//finaliza conexao
             break;
         }
 
